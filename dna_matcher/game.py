@@ -1,4 +1,4 @@
-"""Pong game main function."""
+"""game module."""
 
 import pygame
 
@@ -11,7 +11,7 @@ def main() -> None:
     pygame.init()
 
     # Pygame setup
-    SCREEN_SIZE = (600, 400)
+    SCREEN_SIZE = (1280, 768)
 
     clock = pygame.time.Clock()
     screen = pygame.display.set_mode(SCREEN_SIZE)
