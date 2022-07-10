@@ -1,6 +1,5 @@
 import pygame.constants as constants
 import pygame.draw as draw
-import pygame.rect as rect
 import pygame.surface as surface
 import pygame.time as time
 
@@ -71,18 +70,72 @@ class DebugScene(Scene):
         super().__init__(screen)
 
         self.bg = surface.Surface(self.screen.get_size())
-        self.bg.fill((200, 200, 200))
+        self.bg.fill((20, 20, 20))
 
         self.rect = self.bg.get_rect()
         self.rect.center = self.screen_rect.center
 
-        # Do whatever you want here
-        self.test_rect = rect.Rect(0, 0, 10, 10)
-        self.test_rect.center = self.screen_rect.center
+        self.load_sample1_label = interface.Label.from_text(screen, "No \"DNA\" sample selected yet.", (255, 255, 255), 18, 30, 1)
+        self.load_sample1_label.rect.bottomleft = self.screen_rect.bottomleft
+        self.load_sample1_label.rect.x += 10
+        self.load_sample1_label.rect.y = 610
+        self.load_sample1_button = interface.Button(screen,
+            utils.load_image("matcher_view/load1_button_on.png"),
+            utils.load_image("matcher_view/load1_button_off.png"),
+            utils.load_image("matcher_view/load1_button_clicked.png"))
+        self.load_sample1_button.rect.bottomleft = self.screen_rect.bottomleft
+        self.load_sample1_button.rect.x += 10
+        self.load_sample1_button.rect.y -= 10
+
+        self.load_sample2_label = interface.Label.from_text(screen, "No \"DNA\" sample selected.", (255, 255, 255), 18, 30, 1)
+        self.load_sample2_label.rect.bottomright = self.screen_rect.bottomright
+        self.load_sample2_label.rect.x -= 10
+        self.load_sample2_label.rect.y = self.load_sample1_label.rect.y
+        self.load_sample2_button = interface.Button(screen,
+            utils.load_image("matcher_view/load2_button_on.png"),
+            utils.load_image("matcher_view/load2_button_off.png"),
+            utils.load_image("matcher_view/load2_button_clicked.png"))
+        self.load_sample2_button.rect.bottomright = self.screen_rect.bottomright
+        self.load_sample2_button.rect.x -= 10
+        self.load_sample2_button.rect.y -= 10
+
+        self.match_button = interface.Button(screen,
+            utils.load_image("matcher_view/match_button_on.png"),
+            utils.load_image("matcher_view/match_button_off.png"),
+            utils.load_image("matcher_view/match_button_clicked.png"))
+        self.match_button.rect.center = self.screen_rect.center
+        self.match_button.rect.y = 620
+        self.match_label = interface.Label.from_text(screen, "Nothing to compare yet", (255, 255, 255), 18, 30, 1)
+        self.match_label.rect.centerx = self.screen_rect.centerx
+        self.match_label.rect.top = self.match_button.rect.bottom
+        self.match_label.rect.y += 10
 
     def draw(self):
         self.screen.blit(self.bg, self.rect)
-        draw.rect(self.screen, (0, 0, 180), self.test_rect)
+
+        # Dividing lines
+        draw.line(self.screen, (0, 102, 255), (640, 0), (640, 600), width=4)
+        draw.line(self.screen, (0, 102, 255), (0, 600), (1280, 600), width=4)
+        draw.line(self.screen, (0, 102, 255), (360, 600), (360, 768), width=4)
+        draw.line(self.screen, (0, 102, 255), (965, 600), (965, 768), width=4)
+
+        # Buttons and Labels drawning.
+        self.load_sample1_label.draw()
+        self.load_sample1_button.draw()
+        self.load_sample2_label.draw()
+        self.load_sample2_button.draw()
+        self.match_button.draw()
+        self.match_label.draw()
+
+    def update(self):
+        self.load_sample1_button.update()
+        self.load_sample2_button.update()
+        self.match_button.update()
+    
+    def update_on_event(self, event):
+        self.load_sample1_button.update_on_event(event)
+        self.load_sample2_button.update_on_event(event)
+        self.match_button.update_on_event(event)
 
 
 class IntroScene(Scene):
@@ -118,7 +171,7 @@ class IntroScene(Scene):
                 "main_menu",
                 effects.FadeTransition(
                     self.screen, self.scene_manager, "main_menu",
-                    (0, 0, 0), 4))
+                    (0, 0, 0), 24))
 
 
 class SceneManager:
