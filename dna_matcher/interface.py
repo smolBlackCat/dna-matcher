@@ -2,6 +2,7 @@
 game interface.
 """
 
+import os
 import textwrap
 
 import pygame.constants as constants
@@ -209,7 +210,7 @@ def generate_text_surface(text, colour, size, chars_per_line, y_padding,
         fact the rendered text.
     """
 
-    text_font = font.SysFont(None, size, bold, italic)
+    text_font = font.Font(os.path.join("game_data", "fonts", "pixel.ttf"), size)
     rendered_paragraph = [
         text_font.render(phrase, antialised, colour)
         for phrase in textwrap.wrap(text, chars_per_line)
