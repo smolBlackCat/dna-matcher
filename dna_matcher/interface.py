@@ -131,7 +131,8 @@ class Label(sprite.Sprite):
         self.image = generate_text_surface(
             new_text, self.colour,self.size, self.chars_per_line,
             self.y_padding, self.bold, self.italic, self.antialised)
-        self.rect = self.image.get_rect()
+        
+        # self.rect = self.image.get_rect()
 
     @classmethod
     def from_text(cls, screen, text, colour, size, chars_per_line, y_padding,
