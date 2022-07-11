@@ -3,7 +3,7 @@ import pygame.draw as draw
 import pygame.surface as surface
 import pygame.time as time
 
-from . import effects, interface, utils
+from . import app, effects, interface, utils
 
 
 class Scene:
@@ -82,7 +82,8 @@ class DebugScene(Scene):
         self.load_sample1_button = interface.Button(screen,
             utils.load_image("matcher_view/load1_button_on.png"),
             utils.load_image("matcher_view/load1_button_off.png"),
-            utils.load_image("matcher_view/load1_button_clicked.png"))
+            utils.load_image("matcher_view/load1_button_clicked.png"),
+            lambda: self.load([40, 590], 0))
         self.load_sample1_button.rect.bottomleft = self.screen_rect.bottomleft
         self.load_sample1_button.rect.x += 10
         self.load_sample1_button.rect.y -= 10
@@ -94,7 +95,8 @@ class DebugScene(Scene):
         self.load_sample2_button = interface.Button(screen,
             utils.load_image("matcher_view/load2_button_on.png"),
             utils.load_image("matcher_view/load2_button_off.png"),
-            utils.load_image("matcher_view/load2_button_clicked.png"))
+            utils.load_image("matcher_view/load2_button_clicked.png"),
+            lambda: self.load([724, 1217], 1))
         self.load_sample2_button.rect.bottomright = self.screen_rect.bottomright
         self.load_sample2_button.rect.x -= 10
         self.load_sample2_button.rect.y -= 10
@@ -105,10 +107,23 @@ class DebugScene(Scene):
             utils.load_image("matcher_view/match_button_clicked.png"))
         self.match_button.rect.center = self.screen_rect.center
         self.match_button.rect.y = 620
-        self.match_label = interface.Label.from_text(screen, "Nothing to compare yet", (255, 255, 255), 18, 30, 1)
+        self.match_label = interface.Label.from_text(screen, "Fill all the sample's boxes", (255, 255, 255), 18, 30, 1)
         self.match_label.rect.centerx = self.screen_rect.centerx
         self.match_label.rect.top = self.match_button.rect.bottom
         self.match_label.rect.y += 10
+
+        self.dna_samples = [None, None]
+    
+    def load(self, x_boundaries, index):
+        path = app.fd("Select your sample")
+        if path is None:
+            return
+        self.dna_samples[index] = app.DNA(self.screen, x_boundaries, path)
+
+        if (not index):
+            self.load_sample1_label.update_text("Ready and loaded")
+        else:
+            self.load_sample2_label.update_text("Ready and loaded")
 
     def draw(self):
         self.screen.blit(self.bg, self.rect)
@@ -118,6 +133,12 @@ class DebugScene(Scene):
         draw.line(self.screen, (0, 102, 255), (0, 600), (1280, 600), width=4)
         draw.line(self.screen, (0, 102, 255), (360, 600), (360, 768), width=4)
         draw.line(self.screen, (0, 102, 255), (965, 600), (965, 768), width=4)
+
+        for dna in self.dna_samples:
+            try:
+                dna.draw()
+            except AttributeError:
+                continue
 
         # Buttons and Labels drawning.
         self.load_sample1_label.draw()
@@ -131,7 +152,10 @@ class DebugScene(Scene):
         self.load_sample1_button.update()
         self.load_sample2_button.update()
         self.match_button.update()
-    
+
+        if self.dna_samples[0] and self.dna_samples[1]:
+            self.match_label.update_text("You are all free now.")
+
     def update_on_event(self, event):
         self.load_sample1_button.update_on_event(event)
         self.load_sample2_button.update_on_event(event)
