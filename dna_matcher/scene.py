@@ -83,7 +83,7 @@ class DebugScene(Scene):
             utils.load_image("matcher_view/load1_button_on.png"),
             utils.load_image("matcher_view/load1_button_off.png"),
             utils.load_image("matcher_view/load1_button_clicked.png"),
-            lambda: self.load([40, 590], 0))
+            lambda: self.load([100, 500], 0))
         self.load_sample1_button.rect.bottomleft = self.screen_rect.bottomleft
         self.load_sample1_button.rect.x += 10
         self.load_sample1_button.rect.y -= 10
@@ -96,7 +96,7 @@ class DebugScene(Scene):
             utils.load_image("matcher_view/load2_button_on.png"),
             utils.load_image("matcher_view/load2_button_off.png"),
             utils.load_image("matcher_view/load2_button_clicked.png"),
-            lambda: self.load([724, 1217], 1))
+            lambda: self.load([784, 1127], 1))
         self.load_sample2_button.rect.bottomright = self.screen_rect.bottomright
         self.load_sample2_button.rect.x -= 10
         self.load_sample2_button.rect.y -= 10
@@ -113,7 +113,7 @@ class DebugScene(Scene):
         self.match_label.rect.y += 10
 
         self.dna_samples = [None, None]
-    
+
     def load(self, x_boundaries, index):
         path = app.fd("Select your sample")
         if path is None:
@@ -155,6 +155,12 @@ class DebugScene(Scene):
 
         if self.dna_samples[0] and self.dna_samples[1]:
             self.match_label.update_text("You are all free now.")
+        
+        for dna in self.dna_samples:
+            try:
+                dna.update()
+            except AttributeError:
+                continue
 
     def update_on_event(self, event):
         self.load_sample1_button.update_on_event(event)

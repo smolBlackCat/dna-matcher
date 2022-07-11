@@ -28,22 +28,31 @@ class DNA:
         self.circles = []
         self.lines = []
         y_row = self.y_boundaries[0]
-
+        approximity = 0
+        approximity_factor = 30
         for i in range(20):
             circle_pair = []
             line_par_points = []
 
-            circle_pair.append([self.x_boundaries[0], y_row])
-            circle_pair.append([self.x_boundaries[1], y_row])
+            circle_pair.append([self.x_boundaries[0] + approximity, y_row])
+            circle_pair.append([self.x_boundaries[1] - approximity, y_row])
 
-            line_par_points.append([self.x_boundaries[0], y_row])
-            line_par_points.append([self.x_boundaries[1], y_row])
+            # line_par_points.append([self.x_boundaries[0], y_row])
+            # line_par_points.append([self.x_boundaries[1], y_row])
+            line_par_points.append(circle_pair[0])
+            line_par_points.append(circle_pair[1])
 
             self.circles.append(circle_pair)
             self.lines.append(line_par_points)
 
             y_row += 25
-    
+
+            approximity += approximity_factor
+            if approximity >= 300 or approximity <= 0:
+                approximity_factor *= -1
+
+        self.speeds = [[10, 10] for i in range(len(self.circles))]
+
     def draw(self):
         for circle_pair, line_points, code in zip(self.circles, self.lines, self.genome):
             draw.line(self.screen, self.colour_map.get(code), line_points[0], line_points[1], width=3)
@@ -51,14 +60,16 @@ class DNA:
             draw.circle(self.screen, (255, 255, 255), circle_pair[1], 10)
     
     def update(self):
-        # TODO: synchronised movement
-        # speed = 10
-        # for circle_pair, line_points in zip(self.circles, self.lines):
-        #     circle_pair[0][0] += speed
-        #     circle_pair[1][0] += speed
+        for circle_pair, speed_pair in zip(self.circles, self.speeds):
+            circle_pair[0][0] += speed_pair[0]
+            circle_pair[1][0] -= speed_pair[1]
 
-        #     for circle
-        pass
+            # Checking collisions with invisible wall: circle 1
+            if circle_pair[0][0] <= self.x_boundaries[0] or circle_pair[0][0] >= self.x_boundaries[1]:
+                speed_pair[0] *= -1
+            # Checking collisions with invisible wall: circle 2
+            if circle_pair[1][0] <= self.x_boundaries[0] or circle_pair[1][0] >= self.x_boundaries[1]:
+                speed_pair[1] *= -1
 
     @staticmethod
     def get_genome(filename: str) -> str:
