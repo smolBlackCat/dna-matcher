@@ -1,21 +1,19 @@
 """Multiplatform module for file dialogs."""
 
-from zenipy import file_selection
-from tkinter import filedialog
 import sys
 
-def _unix_file_dialog(win_title: str, win_text: str) -> str:
-    result = file_selection(title=win_title, text=win_text)
-    return result
 
+def fd(win_title: str = None) -> str:
+    if sys.platform == "linux":
+        from zenipy import file_selection
+        result = file_selection(title=win_title, multiple=False)
+        return result
+    else:
+        import tkinter as tk
+        from tkinter import filedialog
 
-def _windows_file_dialog(win_title: str, win_text: str) -> str:
-    result = filedialog.askopenfilename()
-    return result
+        root = tk.TK()
+        root.withdraw()
 
-
-def file_dialog(win_title: str, win_text: str) -> str:
-    if sys.platform == "win32":
-        return _windows_file_dialog(win_title, win_text)
-    elif sys.platform == "linux":
-        return _unix_file_dialog(win_title, win_text)
+        result = filedialog.askopenfilename()
+        return result
