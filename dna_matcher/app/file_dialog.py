@@ -12,7 +12,7 @@ def fd(win_title: str = None) -> str:
         import tkinter as tk
         from tkinter import filedialog
 
-        root = tk.TK()
+        root = tk.Tk()
         root.withdraw()
 
         result = filedialog.askopenfilename()
