@@ -104,7 +104,8 @@ class DebugScene(Scene):
         self.match_button = interface.Button(screen,
             utils.load_image("matcher_view/match_button_on.png"),
             utils.load_image("matcher_view/match_button_off.png"),
-            utils.load_image("matcher_view/match_button_clicked.png"))
+            utils.load_image("matcher_view/match_button_clicked.png"),
+            lambda: self.match_it())
         self.match_button.rect.center = self.screen_rect.center
         self.match_button.rect.y = 620
         self.match_label = interface.Label.from_text(screen, "Fill all the sample's boxes", (255, 255, 255), 18, 30, 1)
@@ -113,6 +114,14 @@ class DebugScene(Scene):
         self.match_label.rect.y += 10
 
         self.dna_samples = [None, None]
+    
+    def match_it(self):
+        if not (None in self.dna_samples):
+            ratio = int(app.DNA.match(self.dna_samples[0], self.dna_samples[1])*100)
+            message = f"The samples have {ratio}% of chance to being from the guy."
+            self.match_label.update_text(message)
+        return
+
 
     def load(self, x_boundaries, index):
         path = app.fd("Select your sample")
@@ -124,6 +133,9 @@ class DebugScene(Scene):
             self.load_sample1_label.update_text("Ready and loaded")
         else:
             self.load_sample2_label.update_text("Ready and loaded")
+        
+        if self.dna_samples[0] and self.dna_samples[1]:
+            self.match_label.update_text("You are all free now.")
 
     def draw(self):
         self.screen.blit(self.bg, self.rect)
@@ -153,9 +165,6 @@ class DebugScene(Scene):
         self.load_sample2_button.update()
         self.match_button.update()
 
-        if self.dna_samples[0] and self.dna_samples[1]:
-            self.match_label.update_text("You are all free now.")
-        
         for dna in self.dna_samples:
             try:
                 dna.update()
