@@ -3,7 +3,7 @@ import pygame.draw as draw
 import pygame.surface as surface
 import pygame.time as time
 
-from . import app, effects, interface, utils
+from . import app, effects, interface, utils, languages
 
 
 class Scene:
@@ -75,7 +75,7 @@ class DebugScene(Scene):
         self.rect = self.bg.get_rect()
         self.rect.center = self.screen_rect.center
 
-        self.load_sample1_label = interface.Label.from_text(screen, "No \"DNA\" sample selected yet.", (255, 255, 255), 18, 30, 1)
+        self.load_sample1_label = interface.Label.from_text(screen, languages.get_message("load_sample"), (255, 255, 255), 18, 30, 1)
         self.load_sample1_label.rect.bottomleft = self.screen_rect.bottomleft
         self.load_sample1_label.rect.x += 10
         self.load_sample1_label.rect.y = 610
@@ -88,7 +88,7 @@ class DebugScene(Scene):
         self.load_sample1_button.rect.x += 10
         self.load_sample1_button.rect.y -= 10
 
-        self.load_sample2_label = interface.Label.from_text(screen, "No \"DNA\" sample selected.", (255, 255, 255), 18, 30, 1)
+        self.load_sample2_label = interface.Label.from_text(screen, languages.get_message("load_sample"), (255, 255, 255), 18, 30, 1)
         self.load_sample2_label.rect.bottomright = self.screen_rect.bottomright
         self.load_sample2_label.rect.x -= 10
         self.load_sample2_label.rect.y = self.load_sample1_label.rect.y
@@ -108,7 +108,7 @@ class DebugScene(Scene):
             lambda: self.match_it())
         self.match_button.rect.center = self.screen_rect.center
         self.match_button.rect.y = 620
-        self.match_label = interface.Label.from_text(screen, "Fill all the sample's boxes", (255, 255, 255), 18, 30, 1)
+        self.match_label = interface.Label.from_text(screen, languages.get_message("match"), (255, 255, 255), 18, 30, 1)
         self.match_label.rect.centerx = self.screen_rect.centerx
         self.match_label.rect.top = self.match_button.rect.bottom
         self.match_label.rect.y += 10
@@ -118,24 +118,24 @@ class DebugScene(Scene):
     def match_it(self):
         if not (None in self.dna_samples):
             ratio = int(app.DNA.match(self.dna_samples[0], self.dna_samples[1])*100)
-            message = f"The samples have {ratio}% of chance to being from the guy."
+            message = languages.get_message("matchit").format(ratio)
             self.match_label.update_text(message)
         return
 
 
     def load(self, x_boundaries, index):
-        path = app.fd("Select your sample")
+        path = app.fd(languages.get_message("load"))
         if path is None:
             return
         self.dna_samples[index] = app.DNA(self.screen, x_boundaries, path)
 
         if (not index):
-            self.load_sample1_label.update_text("Ready and loaded")
+            self.load_sample1_label.update_text(languages.get_message("loaded"))
         else:
-            self.load_sample2_label.update_text("Ready and loaded")
+            self.load_sample2_label.update_text(languages.get_message("loaded"))
         
         if self.dna_samples[0] and self.dna_samples[1]:
-            self.match_label.update_text("You are all free now.")
+            self.match_label.update_text(languages.get_message("match_ready"))
 
     def draw(self):
         self.screen.blit(self.bg, self.rect)
@@ -144,7 +144,7 @@ class DebugScene(Scene):
         draw.line(self.screen, (0, 102, 255), (640, 0), (640, 600), width=4)
         draw.line(self.screen, (0, 102, 255), (0, 600), (1280, 600), width=4)
         draw.line(self.screen, (0, 102, 255), (360, 600), (360, 768), width=4)
-        draw.line(self.screen, (0, 102, 255), (965, 600), (965, 768), width=4)
+        draw.line(self.screen, (0, 102, 255), (870, 600), (870, 768), width=4)
 
         for dna in self.dna_samples:
             try:
