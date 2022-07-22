@@ -36,7 +36,6 @@ def get_message(code: str) -> str:
 
     global message_map
 
-    cur_locale = locale.getlocale()[0]
+    cur_locale = locale.getdefaultlocale()[0]
 
     return message_map[cur_locale][code]
- 
